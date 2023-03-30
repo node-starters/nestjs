@@ -20,6 +20,7 @@
     "paths": {
       "@api/*": ["./src/app/api/*"],
       "@guards/*": ["./src/app/guards/*"],
+      "@services/*": ["./src/app/services/*"],
       "@decorators/*": ["./src/app/decorators/*"]
     }
   }

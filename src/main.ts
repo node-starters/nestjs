@@ -6,35 +6,38 @@ import {
   VersioningType,
 } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { EnvService } from '@services/env';
 
 class Server {
   static async bootstrap(): Promise<Server> {
     const app = await NestFactory.create(AppModule);
+
     const server = new Server(app);
-    server.configSwagger();
+    server.setupSwagger();
     return server;
   }
+  readonly #env = this.app.get(EnvService);
   constructor(public app: INestApplication) {
     app.enableVersioning({
       type: VersioningType.URI,
     });
     app.useGlobalPipes(new ValidationPipe());
   }
-  configSwagger() {
-    const config = new DocumentBuilder()
+  setupSwagger() {
+    const builder = new DocumentBuilder()
       .setTitle('My Application')
       .setDescription('My Application Service')
       .setVersion('1.0')
-      .addTag('api')
       .build();
-    const document = SwaggerModule.createDocument(this.app, config);
+    const document = SwaggerModule.createDocument(this.app, builder);
     SwaggerModule.setup('api', this.app, document, {
       customSiteTitle: 'Docs | My Application',
     });
   }
   async start() {
-    this.app.listen(3000);
-    console.info(`Server running on ${3000}`);
+    const port = this.#env.port;
+    await this.app.listen(port);
+    console.info(`Server running on ${port}`);
   }
 }
 
