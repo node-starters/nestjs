@@ -13,7 +13,10 @@ export const loaders = [
   secretLoader,
 ];
 
+const JPort = Joi.number().integer();
+const JSecret = Joi.string().min(1);
+
 export const schema = Joi.object({
-  PORT: Joi.number().integer().required(),
-  'SECRETS.MAIL_TOKEN': Joi.string().min(1).required(),
+  PORT: JPort.required(),
+  'SECRETS.MAIL_TOKEN': JSecret.required(),
 });
