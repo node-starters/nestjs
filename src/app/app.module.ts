@@ -8,6 +8,8 @@ import { ApiModule } from './api/api.module';
 import { join } from 'node:path';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { loaders, EnvConfig, schema } from '@config/index';
+import { MongooseModule } from '@nestjs/mongoose';
+import { MongooseError } from 'mongoose';
 
 @Module({
   imports: [
@@ -31,6 +33,22 @@ import { loaders, EnvConfig, schema } from '@config/index';
       inject: [ConfigService],
     }),
     PassportModule,
+    MongooseModule.forRootAsync({
+      async useFactory(config: ConfigService) {
+        const mongo = config.get<EnvConfig['mongo']>('mongo');
+        return {
+          uri: mongo.uri,
+          connectionFactory(conn: unknown, name: string) {
+            console.info('MongoDB Connected Successfully');
+          },
+          connectionErrorFactory(err: MongooseError) {
+            console.error(err);
+          },
+        };
+      },
+      imports: [ConfigModule],
+      inject: [ConfigService],
+    }),
     ApiModule,
   ],
   controllers: [AppController],
