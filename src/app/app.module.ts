@@ -14,6 +14,7 @@ import { MongooseError } from 'mongoose';
 @Module({
   imports: [
     ConfigModule.forRoot({
+      isGlobal: true,
       load: loaders,
       validationSchema: schema,
     }),
