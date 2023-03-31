@@ -1,31 +1,38 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { ApiModule } from './api/api.module';
 import { BasicStrategy, TokenStrategy } from './guards';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { ServeStaticModule } from '@nestjs/serve-static';
+import { AppController } from './app.controller';
+import { ApiModule } from './api/api.module';
 import { join } from 'node:path';
-import { ConfigModule } from '@nestjs/config';
-import { EnvService } from '@services/env';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { loaders, EnvConfig, schema } from '@config/index';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      load: loaders,
+      validationSchema: schema,
+    }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '../../', 'public'),
     }),
-    JwtModule.register({
-      global: true,
-      secret: 'secretKey',
-      signOptions: { expiresIn: '60s' },
-    }),
-    ConfigModule.forRoot({
-      envFilePath: '.env',
+    JwtModule.registerAsync({
+      async useFactory(config: ConfigService) {
+        const secrets = config.get<EnvConfig['secrets']>('secrets');
+        return {
+          secret: secrets.auth,
+          signOptions: { expiresIn: '60s' },
+        };
+      },
+      imports: [ConfigModule],
+      inject: [ConfigService],
     }),
     PassportModule,
     ApiModule,
   ],
   controllers: [AppController],
-  providers: [EnvService, BasicStrategy, TokenStrategy],
+  providers: [BasicStrategy, TokenStrategy],
 })
 export class AppModule {}

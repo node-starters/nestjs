@@ -6,7 +6,7 @@ import {
   VersioningType,
 } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { EnvService } from '@services/env';
+import { ConfigService } from '@nestjs/config';
 
 class Server {
   static async bootstrap(): Promise<Server> {
@@ -16,7 +16,7 @@ class Server {
     server.setupSwagger();
     return server;
   }
-  readonly #env = this.app.get(EnvService);
+  readonly #config = this.app.get(ConfigService);
   constructor(public app: INestApplication) {
     app.enableVersioning({
       type: VersioningType.URI,
@@ -35,7 +35,7 @@ class Server {
     });
   }
   async start() {
-    const port = this.#env.port;
+    const port = this.#config.get<number>('port');
     await this.app.listen(port);
     console.info(`Server running on ${port}`);
   }

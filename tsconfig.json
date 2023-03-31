@@ -19,6 +19,7 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@api/*": ["./src/app/api/*"],
+      "@config/*": ["./src/config/*"],
       "@guards/*": ["./src/app/guards/*"],
       "@services/*": ["./src/app/services/*"],
       "@decorators/*": ["./src/app/decorators/*"]
