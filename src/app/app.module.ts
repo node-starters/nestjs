@@ -9,7 +9,6 @@ import { join } from 'node:path';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { loaders, EnvConfig, schema } from '@config/index';
 import { MongooseModule } from '@nestjs/mongoose';
-import { MongooseError } from 'mongoose';
 
 @Module({
   imports: [
@@ -37,15 +36,7 @@ import { MongooseError } from 'mongoose';
     MongooseModule.forRootAsync({
       async useFactory(config: ConfigService) {
         const mongo = config.get<EnvConfig['mongo']>('mongo');
-        return {
-          uri: mongo.uri,
-          connectionFactory(conn: unknown, name: string) {
-            console.info('MongoDB Connected Successfully');
-          },
-          connectionErrorFactory(err: MongooseError) {
-            console.error(err);
-          },
-        };
+        return { uri: mongo.uri };
       },
       imports: [ConfigModule],
       inject: [ConfigService],
