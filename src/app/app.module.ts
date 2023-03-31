@@ -12,6 +12,7 @@ import { loaders, EnvConfig, schema } from '@config/index';
 @Module({
   imports: [
     ConfigModule.forRoot({
+      isGlobal: true,
       load: loaders,
       validationSchema: schema,
     }),
