@@ -15,5 +15,5 @@ export const loaders = [
 
 export const schema = Joi.object({
   PORT: Joi.number().integer().required(),
-  'SECRETS.AUTH': Joi.string().min(1).required(),
+  'SECRETS.MAIL_TOKEN': Joi.string().min(1).required(),
 });

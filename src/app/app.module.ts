@@ -22,7 +22,8 @@ import { loaders, EnvConfig, schema } from '@config/index';
       async useFactory(config: ConfigService) {
         const secrets = config.get<EnvConfig['secrets']>('secrets');
         return {
-          secret: secrets.auth,
+          publicKey: secrets.public_key,
+          privateKey: secrets.private_key,
           signOptions: { expiresIn: '60s' },
         };
       },
