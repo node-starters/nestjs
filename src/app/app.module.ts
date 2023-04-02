@@ -1,49 +1,32 @@
 import { Module } from '@nestjs/common';
-import { BasicStrategy, TokenStrategy } from './guards';
+import { BasicStrategy, BearerStrategy } from './guards';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
 import { AppController } from './app.controller';
 import { ApiModule } from './api/api.module';
 import { join } from 'node:path';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { loaders, EnvConfig, schema } from '@config/index';
 import { MongooseModule } from '@nestjs/mongoose';
+import { EnvModule, EnvService } from './shared/env';
+import { TokenModule } from './shared/token';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: loaders,
-      validationSchema: schema,
-    }),
+    EnvModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '../../', 'public'),
     }),
-    JwtModule.registerAsync({
-      async useFactory(config: ConfigService) {
-        const secrets = config.get<EnvConfig['secrets']>('secrets');
-        return {
-          publicKey: secrets.public_key,
-          privateKey: secrets.private_key,
-          signOptions: { expiresIn: '60s' },
-        };
-      },
-      imports: [ConfigModule],
-      inject: [ConfigService],
-    }),
+    TokenModule,
     PassportModule,
     MongooseModule.forRootAsync({
-      async useFactory(config: ConfigService) {
-        const mongo = config.get<EnvConfig['mongo']>('mongo');
-        return { uri: mongo.uri };
+      async useFactory(env: EnvService) {
+        return { uri: env.mongo.uri };
       },
-      imports: [ConfigModule],
-      inject: [ConfigService],
+      imports: [EnvModule],
+      inject: [EnvService],
     }),
     ApiModule,
   ],
   controllers: [AppController],
-  providers: [BasicStrategy, TokenStrategy],
+  providers: [BasicStrategy, BearerStrategy],
 })
 export class AppModule {}

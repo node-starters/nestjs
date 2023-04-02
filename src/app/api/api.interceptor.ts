@@ -15,6 +15,7 @@ export class ApiInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       map((result) => {
+        console.info(result);
         let message = this.$reflector.get<string>(
           SUCCESS_MSG,
           context.getHandler(),

@@ -1,12 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import {
+  HttpException,
+  HttpStatus,
   INestApplication,
   ValidationPipe,
   VersioningType,
 } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ConfigService } from '@nestjs/config';
+import { ValidationError } from 'class-validator';
+import { EnvService } from '@shared/env';
 
 class Server {
   static async bootstrap(): Promise<Server> {
@@ -16,18 +19,34 @@ class Server {
     server.setupSwagger();
     return server;
   }
-  readonly #config = this.app.get(ConfigService);
+  readonly #env = this.app.get(EnvService);
   constructor(public app: INestApplication) {
     app.enableVersioning({
       type: VersioningType.URI,
     });
-    app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalPipes(
+      new ValidationPipe({
+        exceptionFactory: (errors: ValidationError[]) => {
+          const error = errors[0];
+          return new HttpException(
+            {
+              statusCode: HttpStatus.BAD_REQUEST,
+              message: 'Bad Request',
+              errors: Object.values(error.constraints),
+            },
+            HttpStatus.BAD_REQUEST,
+          );
+        },
+      }),
+    );
   }
   setupSwagger() {
     const builder = new DocumentBuilder()
       .setTitle('My Application')
       .setDescription('My Application Service')
       .setVersion('1.0')
+      .addBearerAuth()
+      .addBasicAuth()
       .build();
     const document = SwaggerModule.createDocument(this.app, builder);
     SwaggerModule.setup('api', this.app, document, {
@@ -35,7 +54,7 @@ class Server {
     });
   }
   async start() {
-    const port = this.#config.get<number>('port');
+    const port = this.#env.port;
     await this.app.listen(port);
     console.info(`Server running on ${port}`);
   }

@@ -14,6 +14,7 @@
     "skipLibCheck": true,
     "strictNullChecks": false,
     "noImplicitAny": false,
+    "resolveJsonModule": true,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
@@ -21,6 +22,7 @@
       "@api/*": ["./src/app/api/*"],
       "@config/*": ["./src/config/*"],
       "@guards/*": ["./src/app/guards/*"],
+      "@shared/*": ["./src/app/shared/*"],
       "@services/*": ["./src/app/services/*"],
       "@decorators/*": ["./src/app/decorators/*"]
     }
