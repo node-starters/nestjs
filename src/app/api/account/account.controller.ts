@@ -1,9 +1,10 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { LoginPayload } from './account.validation';
-import { BasicGuard } from '@guards/basic';
-import { ApiBasicAuth, ApiBody } from '@nestjs/swagger';
+import { BasicGuard, BearerGuard } from '@guards/index';
+import { ApiBasicAuth, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { AccountService } from './account.service';
 import { Message } from '@decorators/message.decorator';
+import { IUser, User } from '@decorators/user.decorator';
 import { ACCOUNT_MESSAGES } from './account.constant';
 
 @Controller('account')
@@ -19,7 +20,13 @@ export class AccountController {
       payload.email,
       payload.password,
     );
-    console.info(token);
     return token;
+  }
+  @Get('profile')
+  @UseGuards(BearerGuard)
+  @ApiBearerAuth()
+  @Message(ACCOUNT_MESSAGES.SUCCESS)
+  async profile(@User() user: IUser) {
+    return await this.accountService.profile(user.id);
   }
 }

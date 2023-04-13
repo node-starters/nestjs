@@ -6,6 +6,7 @@ import { ACCOUNT_MESSAGES } from './account.constant';
 import { ApiException } from '@api/api.error';
 import { EnvService } from '@shared/env';
 import { TokenService } from '@shared/token';
+import { passwordUtil } from '@utils/password.util';
 
 @Injectable()
 export class AccountService {
@@ -34,13 +35,25 @@ export class AccountService {
     }
   }
   async login(email: string, password: string) {
-    const acc = await this.AccountModel.findOne({ email });
+    const acc = await this.AccountModel.findOne(
+      { email },
+      {
+        _id: 1,
+        password: 1,
+      },
+    );
     if (!acc) {
-      return Promise.reject(new ApiException([ACCOUNT_MESSAGES.LOGIN.INVALID]));
+      return Promise.reject(new ApiException(ACCOUNT_MESSAGES.LOGIN.INVALID));
     }
-    console.info(email, password);
+    if (!(await passwordUtil.compare(password, acc.password))) {
+      return Promise.reject(new ApiException(ACCOUNT_MESSAGES.LOGIN.INVALID));
+    }
     return this.token.signAuth({
       acc_id: acc._id.toHexString(),
     });
+  }
+  async profile(id: string) {
+    const result = await this.AccountModel.findById(id);
+    return result.toJSON();
   }
 }

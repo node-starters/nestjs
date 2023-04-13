@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { passwordUtil } from '@utils/password.util';
 import { HydratedDocument } from 'mongoose';
 
 export enum AccountType {
@@ -41,3 +42,13 @@ export class Account {
 export type AccountDocument = HydratedDocument<Account>;
 
 export const AccountSchema = SchemaFactory.createForClass(Account);
+
+AccountSchema.pre('save', function (next) {
+  passwordUtil
+    .hash(this.password)
+    .then((password) => {
+      this.password = password;
+      next();
+    })
+    .catch(next);
+});

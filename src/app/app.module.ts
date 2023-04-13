@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { BasicStrategy, BearerStrategy } from './guards';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { PassportModule } from '@nestjs/passport';
@@ -8,6 +8,9 @@ import { join } from 'node:path';
 import { MongooseModule } from '@nestjs/mongoose';
 import { EnvModule, EnvService } from './shared/env';
 import { TokenModule } from './shared/token';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { AppInterceptor } from './app.interceptor';
+import * as MIDDLEWARE from './middleware';
 
 @Module({
   imports: [
@@ -27,6 +30,17 @@ import { TokenModule } from './shared/token';
     ApiModule,
   ],
   controllers: [AppController],
-  providers: [BasicStrategy, BearerStrategy],
+  providers: [
+    BasicStrategy,
+    BearerStrategy,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: AppInterceptor,
+    },
+  ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(...Object.values(MIDDLEWARE)).forRoutes('*');
+  }
+}

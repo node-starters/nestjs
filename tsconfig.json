@@ -20,6 +20,7 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@api/*": ["./src/app/api/*"],
+      "@utils/*": ["./src/utils/*"],
       "@config/*": ["./src/config/*"],
       "@guards/*": ["./src/app/guards/*"],
       "@shared/*": ["./src/app/shared/*"],

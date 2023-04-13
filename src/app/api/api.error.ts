@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 export class ApiException extends HttpException {
-  constructor(errors: string[]) {
+  constructor(...errors: string[]) {
     super(
       {
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
