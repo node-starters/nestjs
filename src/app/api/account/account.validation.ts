@@ -9,3 +9,15 @@ export class LoginPayload {
   @IsNotEmpty()
   password!: string;
 }
+
+export class ProfileResult {
+  @ApiProperty()
+  @IsNotEmpty()
+  name!: string;
+  @ApiProperty()
+  @IsEmail()
+  email!: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  password!: string;
+}
