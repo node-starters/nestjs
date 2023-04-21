@@ -7,12 +7,14 @@ import { ApiException } from '@api/api.error';
 import { EnvService } from '@shared/env';
 import { TokenService } from '@shared/token';
 import { passwordUtil } from '@utils/password.util';
+import { AppLogger } from '@shared/logger';
 
 @Injectable()
 export class AccountService {
   constructor(
     private env: EnvService,
     private token: TokenService,
+    private logger: AppLogger,
     @InjectModel(Account.name) private AccountModel: Model<Account>,
   ) {
     this.bootstrap().catch(console.error);
@@ -54,6 +56,7 @@ export class AccountService {
   }
   async profile(id: string) {
     const result = await this.AccountModel.findById(id);
+    this.logger.log(result);
     return result.toJSON();
   }
 }

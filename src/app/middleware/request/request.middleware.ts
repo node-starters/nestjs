@@ -1,8 +1,10 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
+import { AppLogger } from '@shared/logger';
 import { Request, Response, NextFunction } from 'express';
 
 @Injectable()
-export class LoggerMiddleware implements NestMiddleware {
+export class RequestMiddleware implements NestMiddleware {
+  constructor(public logger: AppLogger) {}
   use(req: Request, res: Response, next: NextFunction) {
     const startTime = Date.now();
     res.on('finish', () => {
@@ -17,10 +19,10 @@ export class LoggerMiddleware implements NestMiddleware {
           ? 32 // green
           : 0; // no color
 
-      console.info(
-        `\n[REQUEST] ${req.method} ${req.url} \x1b[${color}m${
-          res.statusCode
-        }\x1b[0m - ${Date.now() - startTime} ms`,
+      this.logger.log(
+        `${req.method} ${req.url} \x1b[${color}m${res.statusCode}\x1b[0m - ${
+          Date.now() - startTime
+        } ms`,
       );
     });
     next();

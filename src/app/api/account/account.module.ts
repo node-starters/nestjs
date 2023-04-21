@@ -5,6 +5,7 @@ import { Account, AccountSchema } from './account.schema';
 import { AccountService } from './account.service';
 import { EnvModule } from '@shared/env';
 import { TokenModule } from '@shared/token';
+import { LoggerModule } from '@shared/logger';
 
 @Module({
   imports: [
@@ -16,6 +17,9 @@ import { TokenModule } from '@shared/token';
         schema: AccountSchema,
       },
     ]),
+    LoggerModule.forChild({
+      context: AccountModule.name,
+    }),
   ],
   controllers: [AccountController],
   providers: [AccountService],
