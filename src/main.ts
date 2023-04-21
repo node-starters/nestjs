@@ -10,6 +10,7 @@ import {
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationError } from 'class-validator';
 import { EnvService } from '@shared/env';
+import { AppLogger } from '@shared/logger';
 
 class Server {
   static async bootstrap(): Promise<Server> {
@@ -20,6 +21,7 @@ class Server {
     return server;
   }
   readonly #env = this.app.get(EnvService);
+  readonly #logger = this.app.get(AppLogger);
   constructor(public app: INestApplication) {
     app.enableVersioning({
       type: VersioningType.URI,
@@ -54,9 +56,13 @@ class Server {
     });
   }
   async start() {
-    const port = this.#env.port;
-    await this.app.listen(port);
-    console.info(`Server running on ${port}`);
+    try {
+      const port = this.#env.port;
+      await this.app.listen(port);
+      this.#logger.log(`Server running on ${port}`);
+    } catch (err) {
+      this.#logger.error(err.message, err.stack);
+    }
   }
 }
 
@@ -64,6 +70,6 @@ Server.bootstrap()
   .then(async (server) => {
     await server.start();
   })
-  .catch((err) => {
-    console.error(err);
+  .catch(() => {
+    // Do Nothing
   });

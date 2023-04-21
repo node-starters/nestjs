@@ -45,10 +45,10 @@ export class AccountService {
       },
     );
     if (!acc) {
-      return Promise.reject(new ApiException(ACCOUNT_MESSAGES.LOGIN.INVALID));
+      ApiException.throw(ACCOUNT_MESSAGES.LOGIN.INVALID);
     }
     if (!(await passwordUtil.compare(password, acc.password))) {
-      return Promise.reject(new ApiException(ACCOUNT_MESSAGES.LOGIN.INVALID));
+      ApiException.throw(ACCOUNT_MESSAGES.LOGIN.INVALID);
     }
     return this.token.signAuth({
       acc_id: acc._id.toHexString(),
