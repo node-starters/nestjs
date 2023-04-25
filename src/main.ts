@@ -11,11 +11,14 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationError } from 'class-validator';
 import { EnvService } from '@shared/env';
 import { AppLogger } from '@shared/logger';
+import { SocketAdapter } from './app/socket/socket.adapter';
 
 class Server {
   static async bootstrap(): Promise<Server> {
     const app = await NestFactory.create(AppModule);
-
+    const adapter = new SocketAdapter(app);
+    await adapter.connectToRedis();
+    app.useWebSocketAdapter(adapter);
     const server = new Server(app);
     server.setupSwagger();
     return server;

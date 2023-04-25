@@ -11,6 +11,7 @@ import { TokenModule } from './shared/token';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AppInterceptor } from './app.interceptor';
 import { LoggerModule } from './shared/logger/logger.module';
+import { SocketModule } from './socket/socket.module';
 import * as MIDDLEWARE from './middleware';
 
 @Module({
@@ -29,6 +30,7 @@ import * as MIDDLEWARE from './middleware';
       inject: [EnvService],
     }),
     ApiModule,
+    SocketModule,
     LoggerModule.forRoot({
       context: AppModule.name,
     }),
