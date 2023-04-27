@@ -12,6 +12,7 @@ import { ValidationError } from 'class-validator';
 import { EnvService } from '@shared/env';
 import { AppLogger } from '@shared/logger';
 import { SocketAdapter } from './app/socket/socket.adapter';
+import helmet from 'helmet';
 
 class Server {
   static async bootstrap(): Promise<Server> {
@@ -26,6 +27,7 @@ class Server {
   readonly #env = this.app.get(EnvService);
   readonly #logger = this.app.get(AppLogger);
   constructor(public app: INestApplication) {
+    app.use(helmet());
     app.enableVersioning({
       type: VersioningType.URI,
     });
