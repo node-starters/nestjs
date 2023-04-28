@@ -6,6 +6,8 @@ import { AccountService } from './account.service';
 import { EnvModule } from '@shared/env';
 import { TokenModule } from '@shared/token';
 import { LoggerModule } from '@shared/logger';
+import { LanguageModule } from '@shared/language';
+import { resolve } from 'node:path';
 
 @Module({
   imports: [
@@ -19,6 +21,9 @@ import { LoggerModule } from '@shared/logger';
     ]),
     LoggerModule.forChild({
       context: AccountModule.name,
+    }),
+    LanguageModule.forFeature({
+      path: resolve(__dirname, 'account.message.json'),
     }),
   ],
   controllers: [AccountController],

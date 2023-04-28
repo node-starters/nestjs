@@ -19,7 +19,7 @@ export class AccountController {
   @UseGuards(BasicGuard)
   @ApiBody({ type: LoginPayload })
   @ApiBasicAuth()
-  @Message(ACCOUNT_MESSAGES.LOGIN.SUCCESS)
+  @Message('LOGIN.SUCCESS')
   async login(@Body() payload: LoginPayload) {
     const token = await this.accountService.login(
       payload.email,
