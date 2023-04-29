@@ -1,6 +1,8 @@
 {
-  "API.SUCCESS": {
-    "en": "Successful",
-    "er": "Successful"
+  "SUCCESS": {
+    "en": "Successful"
+  },
+  "PING.SUCCESS": {
+    "en": "API is working fine !"
   }
 }

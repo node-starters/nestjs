@@ -1,6 +1,8 @@
 {
   "LOGIN.SUCCESS": {
-    "en": "Login Successful",
-    "hi": "Login Successful"
+    "en": "Login Successful"
+  },
+  "LOGIN.INVALID": {
+    "en": "Invalid credentials"
   }
 }

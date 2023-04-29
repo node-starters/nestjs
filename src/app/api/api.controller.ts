@@ -7,7 +7,7 @@ import { ApiExcludeEndpoint } from '@nestjs/swagger';
 })
 export class ApiController {
   @Get()
-  @Message('API is working fine !')
+  @Message('PING.SUCCESS')
   @ApiExcludeEndpoint()
   ping() {
     return null;

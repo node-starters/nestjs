@@ -13,27 +13,21 @@ import {
   DEFAULT_LANG,
   MESSAGES_DATA,
 } from '@shared/language/language.constant';
+import { ApiException } from './api.error';
 
 @Injectable()
 export class ApiInterceptor implements NestInterceptor {
   constructor(private $reflector: Reflector) {}
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    const req: Request = context.switchToHttp().getRequest();
     return next.handle().pipe(
       map((result) => {
-        const req: Request = context.switchToHttp().getRequest();
         const res: Response = context.switchToHttp().getResponse();
         let message = this.$reflector.get<string>(
           SUCCESS_MSG,
           context.getHandler(),
         );
-        if (message) {
-          console.info(res.locals[MESSAGES_DATA]);
-          const multiLang = res.locals[MESSAGES_DATA][message];
-          if (multiLang) {
-            const lang = req.acceptsLanguages().find((lang) => multiLang[lang]);
-            message = multiLang[lang || res.locals[DEFAULT_LANG]];
-          }
-        }
+        message = this.#extractMessage(req, res, message);
         if (!message) {
           message = 'Success';
         }
@@ -42,9 +36,28 @@ export class ApiInterceptor implements NestInterceptor {
       catchError((err) => {
         if (err instanceof TimeoutError) {
           return throwError(() => new RequestTimeoutException());
+        } else if (err instanceof ApiException) {
+          const res = context.switchToHttp().getResponse();
+          err.message = this.#extractMessage(req, res, err.message);
+          const result = err.getResponse();
+          result.errors.forEach((err) => {
+            err.reason = this.#extractMessage(req, res, err.reason);
+          });
+          return throwError(() => err);
         }
         return throwError(() => err);
       }),
     );
+  }
+  #extractMessage(req: Request, res: Response, message: string) {
+    if (!message) {
+      return message;
+    }
+    const multiLang = res.locals[MESSAGES_DATA][message];
+    if (!multiLang) {
+      return message;
+    }
+    const lang = req.acceptsLanguages().find((lang) => multiLang[lang]);
+    return multiLang[lang || res.locals[DEFAULT_LANG]];
   }
 }

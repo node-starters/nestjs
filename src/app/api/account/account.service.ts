@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Account, AccountType } from './account.schema';
 import { Model } from 'mongoose';
-import { ACCOUNT_MESSAGES } from './account.constant';
 import { ApiException } from '@api/api.error';
 import { EnvService } from '@shared/env';
 import { TokenService } from '@shared/token';
@@ -45,10 +44,10 @@ export class AccountService {
       },
     );
     if (!acc) {
-      ApiException.throw(ACCOUNT_MESSAGES.LOGIN.INVALID);
+      ApiException.throw('LOGIN.INVALID');
     }
     if (!(await passwordUtil.compare(password, acc.password))) {
-      ApiException.throw(ACCOUNT_MESSAGES.LOGIN.INVALID);
+      ApiException.throw('LOGIN.INVALID');
     }
     return this.token.signAuth({
       acc_id: acc._id.toHexString(),
@@ -56,7 +55,6 @@ export class AccountService {
   }
   async profile(id: string) {
     const result = await this.AccountModel.findById(id);
-    this.logger.log(result);
     return result.toJSON();
   }
 }
