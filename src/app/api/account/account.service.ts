@@ -52,8 +52,8 @@ export class AccountService {
       ApiException.throw('LOGIN.INVALID');
     }
     return this.sessionService.create({
-      account_id: acc._id,
-      account_type: acc.type,
+      accountId: acc._id,
+      accountType: acc.type,
     });
   }
   async profile(id: string) {

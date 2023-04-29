@@ -15,19 +15,19 @@ export class Session {
     type: Types.ObjectId,
     required: true,
   })
-  account_id!: string;
+  accountId!: string;
 
   @Prop({
     type: String,
     required: true,
   })
-  account_type!: AccountType;
+  accountType!: AccountType;
 
   @Prop({
     type: Boolean,
     default: true,
   })
-  is_active!: boolean;
+  isActive!: boolean;
 }
 
 export type SessionDocument = HydratedDocument<Session>;

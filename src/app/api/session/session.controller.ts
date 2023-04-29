@@ -5,6 +5,7 @@ import { Message } from '@decorators/message.decorator';
 import {
   ApiBearerAuth,
   ApiOkResponse,
+  ApiOperation,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { BearerGuard } from '@guards/bearer';
@@ -23,7 +24,8 @@ export class SessionController {
   @ApiBearerAuth()
   @Message('LOGOUT.SUCCESS')
   @ApiOkResponse({ type: LogoutResponseDto })
+  @ApiOperation({ summary: 'Logout Session' })
   async logout(@User() user: IUser): Promise<void> {
-    await this.sessionService.logout(user.session_id, user.account_id);
+    await this.sessionService.logout(user.sessionId, user.accountId);
   }
 }

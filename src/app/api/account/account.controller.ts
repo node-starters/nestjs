@@ -5,8 +5,8 @@ import { BasicGuard, BearerGuard } from '@guards/index';
 import {
   ApiBasicAuth,
   ApiBearerAuth,
-  ApiBody,
   ApiOkResponse,
+  ApiOperation,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { AccountService } from './account.service';
@@ -22,10 +22,10 @@ export class AccountController {
   constructor(public accountService: AccountService) {}
   @Post('login')
   @UseGuards(BasicGuard)
-  @ApiBody({ type: LoginPayloadDto })
   @ApiBasicAuth()
   @Message('LOGIN.SUCCESS')
   @ApiOkResponse({ type: LoginResponseDto })
+  @ApiOperation({ summary: 'Login with email & password' })
   async login(@Body() payload: LoginPayloadDto): Promise<string> {
     const token = await this.accountService.login(
       payload.email,
@@ -38,7 +38,8 @@ export class AccountController {
   @ApiBearerAuth()
   @Message('SUCCESS')
   @ApiOkResponse({ type: ProfileResponseDto })
+  @ApiOperation({ summary: 'Fetch profile details' })
   async profile(@User() user: IUser): Promise<ProfileResultDto> {
-    return await this.accountService.profile(user.account_id);
+    return await this.accountService.profile(user.accountId);
   }
 }

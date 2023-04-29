@@ -8,7 +8,7 @@ export const User = createParamDecorator(
 );
 
 export interface IUser {
-  session_id: string;
-  account_id: string;
-  account_type: string;
+  sessionId: string;
+  accountId: string;
+  accountType: string;
 }
