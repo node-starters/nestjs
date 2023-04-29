@@ -5,6 +5,7 @@ import { ApiInterceptor } from './api.interceptor';
 import { AccountModule } from './account/account.module';
 import { LanguageModule } from '@shared/language';
 import { resolve } from 'node:path';
+import { SessionModule } from './session/session.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { resolve } from 'node:path';
     LanguageModule.forRoot({
       path: resolve(__dirname, 'api.message.json'),
     }),
+    SessionModule,
   ],
   controllers: [ApiController],
   providers: [

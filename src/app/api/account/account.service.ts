@@ -1,19 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Account, AccountType } from './account.schema';
 import { Model } from 'mongoose';
 import { ApiException } from '@api/api.error';
 import { EnvService } from '@shared/env';
-import { TokenService } from '@shared/token';
 import { passwordUtil } from '@utils/password.util';
 import { AppLogger } from '@shared/logger';
+import { SessionService } from '@api/session';
 
 @Injectable()
 export class AccountService {
   constructor(
     private env: EnvService,
-    private token: TokenService,
     private logger: AppLogger,
+    @Inject(forwardRef(() => SessionService))
+    private sessionService: SessionService,
     @InjectModel(Account.name) private AccountModel: Model<Account>,
   ) {
     this.bootstrap().catch(console.error);
@@ -40,6 +41,7 @@ export class AccountService {
       { email },
       {
         _id: 1,
+        type: 1,
         password: 1,
       },
     );
@@ -49,8 +51,9 @@ export class AccountService {
     if (!(await passwordUtil.compare(password, acc.password))) {
       ApiException.throw('LOGIN.INVALID');
     }
-    return this.token.signAuth({
-      acc_id: acc._id.toHexString(),
+    return this.sessionService.create({
+      account_id: acc._id,
+      account_type: acc.type,
     });
   }
   async profile(id: string) {

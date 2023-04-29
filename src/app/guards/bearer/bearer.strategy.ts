@@ -15,6 +15,10 @@ export class BearerStrategy extends PassportStrategy(Strategy) {
   }
   validate(payload: unknown): IUser | null {
     console.info(payload);
-    return { id: payload['acc_id'] };
+    return {
+      session_id: payload['session_id'],
+      account_id: payload['account_id'],
+      account_type: payload['account_type'],
+    };
   }
 }

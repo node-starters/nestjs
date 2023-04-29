@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class Response {
+export class ResponseDto {
   @ApiProperty({
     description: 'HTTP Status',
     default: 200,
@@ -13,14 +13,14 @@ export class Response {
   message!: string;
 }
 
-export class ErrorResult {
+export class ErrorResultDto {
   @ApiProperty({
     description: 'Error Message',
   })
   reason!: string;
 }
 
-export class ErrorResponse {
+export class ErrorResponseDto {
   @ApiProperty({
     description: 'HTTP Status',
     default: 422,
@@ -33,8 +33,8 @@ export class ErrorResponse {
   message!: string;
   @ApiProperty({
     isArray: true,
-    type: ErrorResult,
+    type: ErrorResultDto,
     description: 'Possible Errors',
   })
-  errors!: ErrorResult[];
+  errors!: ErrorResultDto[];
 }
