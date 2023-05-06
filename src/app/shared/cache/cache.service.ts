@@ -19,17 +19,16 @@ export class CacheService {
   }
   async isTokenBlocked(token: IToken): Promise<boolean> {
     const result = await this.#client.GET(`EXPIRED_TOKEN_${token.id}`);
-    console.info(result);
     return !!parseInt(result, 10);
   }
   async connect() {
-    this.$logger.log('Redis Connecting ....');
+    this.$logger.log('{Redis} Connecting ....');
     await this.#client.connect();
-    this.$logger.log('Redis Connected !');
+    this.$logger.log('{Redis} Connected !');
   }
   async disconnect() {
-    this.$logger.log('Redis Disconnecting ....');
+    this.$logger.log('{Redis} Disconnecting ....');
     await this.#client.disconnect();
-    this.$logger.log('Redis Disconnected !');
+    this.$logger.log('{Redis} Disconnected !');
   }
 }

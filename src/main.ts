@@ -17,8 +17,8 @@ import helmet from 'helmet';
 class Server {
   static async bootstrap(): Promise<Server> {
     const app = await NestFactory.create(AppModule);
-    const adapter = new SocketAdapter(app);
-    await adapter.connectToRedis();
+    const adapter = new SocketAdapter(app, app.get(AppLogger));
+    await adapter.connectToRedis(app.get(EnvService).redis);
     app.useWebSocketAdapter(adapter);
     const server = new Server(app);
     server.setupSwagger();
