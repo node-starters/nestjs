@@ -1,15 +1,36 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-// import { EnvService } from '@shared/env';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
+import { EnvService } from '@shared/env';
 
 @Injectable()
 export class TokenService {
-  constructor(private jwt: JwtService) {
+  readonly #ISSUER = 'APPINVENTIV';
+  readonly #AUDIENCE = 'https://api.example.com';
+  constructor(private $jwt: JwtService, private $env: EnvService) {
     // console.info(jwt);
   }
-  signAuth(payload: object): string {
-    return this.jwt.sign(payload, {
+  genToken(payload: object, options: JwtSignOptions = {}): string {
+    return this.$jwt.sign(payload, {
+      audience: this.#AUDIENCE,
+      issuer: this.#ISSUER,
+      ...options,
+    });
+  }
+  genAccessToken(payload: Record<string, unknown>) {
+    payload.tid = Date.now();
+    return this.genToken(payload, {
       algorithm: 'RS256',
+      expiresIn: '4h',
+      subject: 'access',
+    });
+  }
+  genRefreshToken(payload: Record<string, unknown>) {
+    payload.tid = Date.now();
+    return this.genToken(payload, {
+      algorithm: 'HS256',
+      expiresIn: '7d',
+      subject: 'refresh',
+      secret: this.$env.secrets.refresh_token,
     });
   }
 }

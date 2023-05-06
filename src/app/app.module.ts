@@ -1,6 +1,6 @@
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { BasicStrategy, BearerStrategy } from './guards';
+import { BasicStrategy, AccessStrategy, RefreshStrategy } from './guards';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { PassportModule } from '@nestjs/passport';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -14,6 +14,7 @@ import { AppInterceptor } from './app.interceptor';
 import { LoggerModule } from './shared/logger/logger.module';
 import { SocketModule } from './socket/socket.module';
 import * as MIDDLEWARE from './middleware';
+import { CacheModule } from '@shared/cache';
 
 @Module({
   imports: [
@@ -39,11 +40,13 @@ import * as MIDDLEWARE from './middleware';
       ttl: 60,
       limit: 10,
     }),
+    CacheModule,
   ],
   controllers: [AppController],
   providers: [
     BasicStrategy,
-    BearerStrategy,
+    AccessStrategy,
+    RefreshStrategy,
     {
       provide: APP_INTERCEPTOR,
       useClass: AppInterceptor,

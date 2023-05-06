@@ -7,8 +7,17 @@ export const User = createParamDecorator(
   },
 );
 
+export interface IToken {
+  id: string;
+  issuedAt: Date;
+  expiredAt: Date;
+  audience: string;
+  subject: string;
+  issuer: string;
+}
+
 export interface IUser {
-  sessionId: string;
-  accountId: string;
-  accountType: string;
+  id: string;
+  type: string;
+  token: IToken;
 }

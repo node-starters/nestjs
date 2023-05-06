@@ -52,8 +52,23 @@ class Server {
       .setTitle('My Application')
       .setDescription('My Application Service')
       .setVersion('1.0')
-      .addBearerAuth()
       .addBasicAuth()
+      .addBearerAuth(
+        {
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          type: 'http',
+        },
+        'AccessToken',
+      )
+      .addBearerAuth(
+        {
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          type: 'http',
+        },
+        'RefreshToken',
+      )
       .build();
     const document = SwaggerModule.createDocument(this.app, builder);
     SwaggerModule.setup('api', this.app, document, {

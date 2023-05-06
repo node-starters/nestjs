@@ -9,11 +9,8 @@ import { Reflector } from '@nestjs/core';
 import { Observable, map, catchError, TimeoutError, throwError } from 'rxjs';
 import { SUCCESS_MSG } from '@decorators/message.decorator';
 import { Request, Response } from 'express';
-import {
-  DEFAULT_LANG,
-  MESSAGES_DATA,
-} from '@shared/language/language.constant';
-import { ApiException } from './api.error';
+import { DEFAULT_LANG, MESSAGES_DATA } from '@shared/language';
+import { ApiException } from './api.exception';
 
 @Injectable()
 export class ApiInterceptor implements NestInterceptor {
@@ -40,7 +37,7 @@ export class ApiInterceptor implements NestInterceptor {
           const res = context.switchToHttp().getResponse();
           err.message = this.#extractMessage(req, res, err.message);
           const result = err.getResponse();
-          result.errors.forEach((err) => {
+          result.reasons.forEach((err) => {
             err.reason = this.#extractMessage(req, res, err.reason);
           });
           return throwError(() => err);

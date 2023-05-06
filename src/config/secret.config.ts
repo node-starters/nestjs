@@ -6,6 +6,7 @@ export interface SecretConfig {
   mail_token: string;
   public_key: string;
   private_key: string;
+  refresh_token: string;
 }
 
 export const secretLoader = registerAs('secrets', () => ({
@@ -18,4 +19,5 @@ export const secretLoader = registerAs('secrets', () => ({
     resolve(__dirname, '../../secrets/jwt-private.pem'),
     'utf8',
   ),
+  refresh_token: process.env['SECRETS.REFRESH_TOKEN'] || 'ABC',
 }));

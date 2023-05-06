@@ -4,5 +4,8 @@
   },
   "PING.SUCCESS": {
     "en": "API is working fine !"
+  },
+  "UNAUTHORIZED.LOGOUT": {
+    "en": "Token in logged out"
   }
 }

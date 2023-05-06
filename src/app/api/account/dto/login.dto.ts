@@ -16,10 +16,23 @@ export class LoginPayloadDto {
   password!: string;
 }
 
-export class LoginResponseDto extends ResponseDto {
+export class LoginResultDto {
   @ApiProperty({
     default: '{JWT_TOKEN}',
-    description: 'Auth Token',
+    description: 'Access Token',
   })
-  result!: string;
+  accessToken!: string;
+  @ApiProperty({
+    default: '{JWT_TOKEN}',
+    description: 'Refresh Token',
+  })
+  refreshToken!: string;
+}
+
+export class LoginResponseDto extends ResponseDto {
+  @ApiProperty({
+    type: LoginResultDto,
+    description: 'Login Result',
+  })
+  result!: LoginResultDto;
 }

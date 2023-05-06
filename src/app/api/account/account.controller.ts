@@ -1,12 +1,13 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { LoginPayloadDto, LoginResponseDto } from './dto/login.dto';
 import { ProfileResultDto, ProfileResponseDto } from './dto/profile.dto';
-import { BasicGuard, BearerGuard } from '@guards/index';
+import { BasicGuard, AccessGuard } from '@guards/index';
 import {
   ApiBasicAuth,
   ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
+  ApiTags,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { AccountService } from './account.service';
@@ -18,6 +19,7 @@ import { ErrorResponseDto } from '@api/api.dto';
 @ApiUnprocessableEntityResponse({
   type: ErrorResponseDto,
 })
+@ApiTags('Account')
 export class AccountController {
   constructor(public accountService: AccountService) {}
   @Post('login')
@@ -26,20 +28,20 @@ export class AccountController {
   @Message('LOGIN.SUCCESS')
   @ApiOkResponse({ type: LoginResponseDto })
   @ApiOperation({ summary: 'Login with email & password' })
-  async login(@Body() payload: LoginPayloadDto): Promise<string> {
-    const token = await this.accountService.login(
+  async login(@Body() payload: LoginPayloadDto): Promise<object> {
+    const result = await this.accountService.login(
       payload.email,
       payload.password,
     );
-    return token;
+    return result;
   }
   @Get('profile')
-  @UseGuards(BearerGuard)
-  @ApiBearerAuth()
+  @UseGuards(AccessGuard)
+  @ApiBearerAuth('AccessToken')
   @Message('SUCCESS')
   @ApiOkResponse({ type: ProfileResponseDto })
   @ApiOperation({ summary: 'Fetch profile details' })
   async profile(@User() user: IUser): Promise<ProfileResultDto> {
-    return await this.accountService.profile(user.accountId);
+    return await this.accountService.profile(user.id);
   }
 }

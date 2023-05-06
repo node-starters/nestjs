@@ -1,8 +1,6 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { SessionService } from './session.service';
 import { SessionController } from './session.controller';
-import { MongooseModule } from '@nestjs/mongoose';
-import { Session, SessionSchema } from './session.schema';
 import { LoggerModule } from '@shared/logger';
 import { LanguageModule } from '@shared/language';
 import { TokenModule } from '@shared/token';
@@ -12,12 +10,6 @@ import { AccountModule } from '@api/account';
 @Module({
   imports: [
     TokenModule,
-    MongooseModule.forFeature([
-      {
-        name: Session.name,
-        schema: SessionSchema,
-      },
-    ]),
     LoggerModule.forChild({
       context: SessionModule.name,
     }),
