@@ -8,32 +8,31 @@ import { CacheService } from '@shared/cache';
 @Injectable()
 export class SessionService {
   constructor(
-    private logger: AppLogger,
+    private $logger: AppLogger,
     private $tokenService: TokenService,
     private $cacheService: CacheService,
   ) {}
   async create(data: CreateDto): Promise<object> {
+    const payload = {
+      tid: Date.now(),
+      typ: data.type,
+      aid: data.id,
+    };
     return {
-      accessToken: this.$tokenService.genAccessToken({
-        aid: data.id,
-        typ: data.type,
-      }),
-      refreshToken: this.$tokenService.genRefreshToken({
-        aid: data.id,
-        typ: data.type,
-      }),
+      accessToken: this.$tokenService.genAccessToken(payload),
+      refreshToken: this.$tokenService.genRefreshToken(payload),
     };
   }
 
   async logout(token: IToken): Promise<void> {
-    this.logger.log(token);
-    this.$cacheService.blockToken(token);
+    await this.$cacheService.blockToken(token);
   }
   async refresh(user: IUser): Promise<string> {
     return Promise.resolve(
       this.$tokenService.genAccessToken({
-        aid: user.id,
+        tid: user.token.id,
         typ: user.type,
+        aid: user.id,
       }),
     );
   }

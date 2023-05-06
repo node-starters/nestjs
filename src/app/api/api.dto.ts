@@ -13,9 +13,9 @@ export class ResponseDto {
   message!: string;
 }
 
-export class ErrorResultDto {
+export class ErrorReasonDto {
   @ApiProperty({
-    description: 'Error Message',
+    description: 'Error Reason',
   })
   reason!: string;
 }
@@ -27,14 +27,19 @@ export class ErrorResponseDto {
   })
   statusCode!: number;
   @ApiProperty({
-    description: 'HTTP Message',
-    default: 'Unprocessable Entity',
+    description: 'Error Message',
+    default: 'Something went wrong',
   })
   message!: string;
   @ApiProperty({
-    isArray: true,
-    type: ErrorResultDto,
-    description: 'Possible Errors',
+    description: 'HTTP Message',
+    default: 'Unprocessable Entity',
   })
-  errors!: ErrorResultDto[];
+  error!: string;
+  @ApiProperty({
+    isArray: true,
+    type: ErrorReasonDto,
+    description: 'Possible Error Reasons',
+  })
+  reasons!: ErrorReasonDto[];
 }

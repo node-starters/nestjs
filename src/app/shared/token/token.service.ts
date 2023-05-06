@@ -17,15 +17,21 @@ export class TokenService {
     });
   }
   genAccessToken(payload: Record<string, unknown>) {
-    payload.tid = Date.now();
     return this.genToken(payload, {
       algorithm: 'RS256',
-      expiresIn: '4h',
+      expiresIn: 300, // 5 minutes
       subject: 'access',
     });
   }
   genRefreshToken(payload: Record<string, unknown>) {
-    payload.tid = Date.now();
+    return this.genToken(payload, {
+      algorithm: 'HS256',
+      expiresIn: '7d',
+      subject: 'refresh',
+      secret: this.$env.secrets.refresh_token,
+    });
+  }
+  genPasswordToken(payload: Record<string, unknown>) {
     return this.genToken(payload, {
       algorithm: 'HS256',
       expiresIn: '7d',

@@ -3,14 +3,15 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 export interface SecretConfig {
-  mail_token: string;
-  public_key: string;
-  private_key: string;
+  password_token: string;
   refresh_token: string;
+  private_key: string;
+  public_key: string;
 }
 
 export const secretLoader = registerAs('secrets', () => ({
-  mail_token: process.env['SECRETS.MAIL_TOKEN'],
+  password_token: process.env['SECRETS.PASSWORD_TOKEN'],
+  refresh_token: process.env['SECRETS.REFRESH_TOKEN'],
   public_key: readFileSync(
     resolve(__dirname, '../../secrets/jwt-public.pem'),
     'utf8',
@@ -19,5 +20,4 @@ export const secretLoader = registerAs('secrets', () => ({
     resolve(__dirname, '../../secrets/jwt-private.pem'),
     'utf8',
   ),
-  refresh_token: process.env['SECRETS.REFRESH_TOKEN'] || 'ABC',
 }));

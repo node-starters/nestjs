@@ -28,7 +28,8 @@ const JEmail = Joi.string().email();
 
 export const schema = Joi.object({
   PORT: JPort.required(),
-  'SECRETS.MAIL_TOKEN': JSecret.required(),
+  'SECRETS.PASSWORD_TOKEN': JSecret.required(),
+  'SECRETS.REFRESH_TOKEN': JSecret.required(),
   'MONGO.HOST': Joi.string().min(1).required(),
   'MONGO.PORT': JPort.required(),
   'MONGO.DB': Joi.string().min(1).required(),

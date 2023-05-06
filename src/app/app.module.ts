@@ -1,6 +1,11 @@
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { BasicStrategy, AccessStrategy, RefreshStrategy } from './guards';
+import {
+  BasicStrategy,
+  AccessStrategy,
+  RefreshStrategy,
+  PasswordStrategy,
+} from './guards';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { PassportModule } from '@nestjs/passport';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -47,6 +52,7 @@ import { CacheModule } from '@shared/cache';
     BasicStrategy,
     AccessStrategy,
     RefreshStrategy,
+    PasswordStrategy,
     {
       provide: APP_INTERCEPTOR,
       useClass: AppInterceptor,

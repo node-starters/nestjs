@@ -13,6 +13,7 @@ import { EnvService } from '@shared/env';
 import { AppLogger } from '@shared/logger';
 import { SocketAdapter } from './app/socket/socket.adapter';
 import helmet from 'helmet';
+import { SecuritySchemeObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 
 class Server {
   static async bootstrap(): Promise<Server> {
@@ -48,27 +49,19 @@ class Server {
     );
   }
   setupSwagger() {
+    const bearerOptions: SecuritySchemeObject = {
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+      type: 'http',
+    };
     const builder = new DocumentBuilder()
       .setTitle('My Application')
       .setDescription('My Application Service')
       .setVersion('1.0')
       .addBasicAuth()
-      .addBearerAuth(
-        {
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
-          type: 'http',
-        },
-        'AccessToken',
-      )
-      .addBearerAuth(
-        {
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
-          type: 'http',
-        },
-        'RefreshToken',
-      )
+      .addBearerAuth(bearerOptions, 'AccessToken')
+      .addBearerAuth(bearerOptions, 'RefreshToken')
+      .addBearerAuth(bearerOptions, 'PasswordToken')
       .build();
     const document = SwaggerModule.createDocument(this.app, builder);
     SwaggerModule.setup('api', this.app, document, {

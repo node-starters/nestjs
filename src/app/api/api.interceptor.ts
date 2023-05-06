@@ -49,6 +49,7 @@ export class ApiInterceptor implements NestInterceptor {
           const res = context.switchToHttp().getResponse();
           err.message = this.#extractMessage(req, res, err.message);
           const result = err.getResponse();
+          result.message = this.#extractMessage(req, res, result.message);
           result.reasons.forEach((err) => {
             err.reason = this.#extractMessage(req, res, err.reason);
           });

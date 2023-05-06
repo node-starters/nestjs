@@ -4,5 +4,8 @@
   },
   "LOGIN.INVALID": {
     "en": "Invalid credentials"
+  },
+  "FORGET.BLOCKED": {
+    "en": "Account is blocked! Please contact administrator"
   }
 }
