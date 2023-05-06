@@ -17,6 +17,12 @@ export class LoginPayloadDto {
 }
 
 export class LoginResultDto {
+  static parse(data: object) {
+    const result = new LoginResultDto();
+    result.accessToken = data['accessToken'];
+    result.refreshToken = data['refreshToken'];
+    return result;
+  }
   @ApiProperty({
     default: '{JWT_TOKEN}',
     description: 'Access Token',

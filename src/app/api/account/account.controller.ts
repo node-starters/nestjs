@@ -1,5 +1,9 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
-import { LoginPayloadDto, LoginResponseDto } from './dto/login.dto';
+import {
+  LoginPayloadDto,
+  LoginResponseDto,
+  LoginResultDto,
+} from './dto/login.dto';
 import { ProfileResultDto, ProfileResponseDto } from './dto/profile.dto';
 import { BasicGuard, AccessGuard } from '@guards/index';
 import {
@@ -28,12 +32,12 @@ export class AccountController {
   @Message('LOGIN.SUCCESS')
   @ApiOkResponse({ type: LoginResponseDto })
   @ApiOperation({ summary: 'Login with email & password' })
-  async login(@Body() payload: LoginPayloadDto): Promise<object> {
+  async login(@Body() payload: LoginPayloadDto): Promise<LoginResultDto> {
     const result = await this.accountService.login(
       payload.email,
       payload.password,
     );
-    return result;
+    return LoginResultDto.parse(result);
   }
   @Get('profile')
   @UseGuards(AccessGuard)
@@ -42,6 +46,7 @@ export class AccountController {
   @ApiOkResponse({ type: ProfileResponseDto })
   @ApiOperation({ summary: 'Fetch profile details' })
   async profile(@User() user: IUser): Promise<ProfileResultDto> {
-    return await this.accountService.profile(user.id);
+    const result = await this.accountService.profile(user.id);
+    return ProfileResultDto.parse(result);
   }
 }

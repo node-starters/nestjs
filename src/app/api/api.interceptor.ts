@@ -11,6 +11,7 @@ import { SUCCESS_MSG } from '@decorators/message.decorator';
 import { Request, Response } from 'express';
 import { DEFAULT_LANG, MESSAGES_DATA } from '@shared/language';
 import { ApiException } from './api.exception';
+import { validateSync } from 'class-validator';
 
 @Injectable()
 export class ApiInterceptor implements NestInterceptor {
@@ -18,6 +19,17 @@ export class ApiInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const req: Request = context.switchToHttp().getRequest();
     return next.handle().pipe(
+      map((result) => {
+        if (result && typeof result === 'object') {
+          const errors = validateSync(result);
+          if (errors?.length) {
+            ApiException.badImplementation(
+              ...errors.flatMap((err) => Object.values(err.constraints)),
+            );
+          }
+        }
+        return result;
+      }),
       map((result) => {
         const res: Response = context.switchToHttp().getResponse();
         let message = this.$reflector.get<string>(

@@ -10,6 +10,7 @@ export interface ErrorResponse {
 const HTTP_MESSAGES = {
   422: 'Unprocessable Entity',
   401: 'Unauthorized',
+  500: 'Bad Implementation',
 };
 
 export class ApiException extends HttpException {
@@ -19,16 +20,20 @@ export class ApiException extends HttpException {
   static unAuthorized(...errors: string[]): never {
     throw new ApiException(HttpStatus.UNAUTHORIZED, ...errors);
   }
+  static badImplementation(...errors: string[]): never {
+    throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, ...errors);
+  }
   getResponse!: () => ErrorResponse;
   constructor(status: HttpStatus, ...reasons: string[]) {
     super(
       {
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        statusCode: status,
         error: HTTP_MESSAGES[status],
         message: reasons[0],
         reasons: reasons.map((reason) => ({ reason })),
       },
       status,
     );
+    HttpStatus.EXPECTATION_FAILED;
   }
 }
