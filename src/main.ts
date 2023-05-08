@@ -32,6 +32,7 @@ class Server {
     app.enableVersioning({
       type: VersioningType.URI,
     });
+    app.enableCors();
     app.useGlobalPipes(
       new ValidationPipe({
         exceptionFactory: (errors: ValidationError[]) => {

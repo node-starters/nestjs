@@ -16,7 +16,6 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
     });
   }
   async validate(payload: Record<string, string>): Promise<IUser> {
-    console.info(payload);
     const user: IUser = {
       id: payload.aid,
       type: payload.typ,

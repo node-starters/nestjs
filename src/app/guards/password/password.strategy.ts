@@ -14,7 +14,6 @@ export class PasswordStrategy extends PassportStrategy(Strategy, 'password') {
     });
   }
   async validate(payload: Record<string, string>): Promise<IUser> {
-    console.info(payload);
     return {
       id: payload.aid,
       type: payload.typ,

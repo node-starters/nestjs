@@ -43,6 +43,7 @@ export class ApiInterceptor implements NestInterceptor {
         return { statusCode: res.statusCode, message, result: result ?? null };
       }),
       catchError((err) => {
+        console.error(err);
         if (err instanceof TimeoutError) {
           return throwError(() => new RequestTimeoutException());
         } else if (err instanceof ApiException) {

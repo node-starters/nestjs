@@ -14,7 +14,7 @@ export class CacheService {
   async blockToken(token: IToken): Promise<void> {
     const key = `EXPIRED_TOKEN_${token.id}`;
     await this.#client.SET(key, 1);
-    const ttl = (token.expiredAt.getTime() - Date.now()) / 1000;
+    const ttl = Math.floor((token.expiredAt.getTime() - Date.now()) / 1000);
     await this.#client.expire(key, ttl);
   }
   async isTokenBlocked(token: IToken): Promise<boolean> {
