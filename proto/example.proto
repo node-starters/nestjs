@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package example;
+
+import "google/protobuf/empty.proto";
+
+service ExampleService {
+  rpc Version (google.protobuf.Empty) returns (stream Version) {}
+}
+
+message Version {
+  int32 current = 1;
+}

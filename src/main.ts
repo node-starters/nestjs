@@ -14,6 +14,9 @@ import { AppLogger } from '@shared/logger';
 import { SocketAdapter } from './app/socket/socket.adapter';
 import helmet from 'helmet';
 import { SecuritySchemeObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
+import { GrpcModule } from './grpc/grpc.module';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { join } from 'node:path';
 
 class Server {
   static async bootstrap(): Promise<Server> {
@@ -69,10 +72,26 @@ class Server {
       customSiteTitle: 'Docs | My Application',
     });
   }
+  async setupGrpc() {
+    const service = await NestFactory.createMicroservice<MicroserviceOptions>(
+      GrpcModule,
+      {
+        transport: Transport.GRPC,
+        options: {
+          url: '192.168.5.75:30010',
+          package: 'example',
+          protoPath: join(__dirname, '../proto/example.proto'),
+        },
+      },
+    );
+    await service.listen();
+    // console.info();
+  }
   async start() {
     try {
       const port = this.#env.port;
-      await this.app.listen(port);
+      await this.setupGrpc();
+      await this.app.listen(port, '192.168.5.75');
       this.#logger.log(`Server running on ${port}`);
     } catch (err) {
       this.#logger.error(err.message, err.stack);
